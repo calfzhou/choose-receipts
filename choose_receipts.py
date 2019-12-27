@@ -48,7 +48,7 @@ def _split_one_by_one(values, indexes, targets):
     desc_values = list(reversed(sorted(values[i] for i in indexes)))
 
     for cnt in range(1, len(indexes) - len(targets) + 2):
-        if sum(desc_values[:cnt]) < targets[0]:
+        if sum(desc_values[:cnt]) < targets[0] or total - sum(desc_values[-cnt:]) < target - targets[0]:
             continue
 
         for selection in itertools.combinations(indexes, cnt):
@@ -69,7 +69,6 @@ def _apply_splits(values, splits):
     for group in splits:
         indexes = _array_sub(indexes, group)
 
-    print(splits, indexes)
     remain = [values[i] for i in indexes]
     parts.append(remain)
     return parts
