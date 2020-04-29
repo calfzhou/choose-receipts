@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+import argparse
 import itertools
 
 
@@ -76,3 +79,18 @@ def _apply_splits(values, splits):
 
 def _array_sub(source, to_remove):
     return [i for i in source if i not in to_remove]
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Receipts Chooser')
+    parser.add_argument('-t', '--targets', type=float, nargs='+', metavar='TARGET', required=True,
+                        help='the target number(s)')
+    parser.add_argument('-v', '--values', type=float, nargs='+', metavar='VALUE', required=True,
+                        help='the raw receipt value(s)')
+
+    args = parser.parse_args()
+    choose_receipts(args.values, args.targets)
+
+
+if __name__ == '__main__':
+    main()
