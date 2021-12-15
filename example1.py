@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from choose_receipts import choose_receipts
+from choose_receipts import choose_receipts, print_selection_result
 
 
 def main():
@@ -39,14 +39,17 @@ def main():
     27
     27'''
 
-    values = [float(v) for v in s.split('\n')]
-    choose_receipts(values, [850, 4700, 4300])
+    values = [int(v) for v in s.split('\n')]
+    result, exact = choose_receipts(values, [850, 4700, 4300])
+    print()
+    print_selection_result(result, exact)
 
-    # One possible solution is:
-    # 850: (138.0, 712.0)
-    # 4700: (210.0, 525.0, 497.0, 500.0, 344.0, 600.0, 237.0, 1000.0, 787.0)
-    # 4300: (267.0, 233.0, 194.0, 430.0, 300.0, 427.0, 153.0, 349.0, 243.0, 390.0, 250.0, 340.0, 245.0, 376.0, 76.0, 27.0)
-    # remaining: [164.0, 39.0, 29.0, 38.0, 39.0, 38.0, 27.0]
+    # One possible exact solution is:
+    # sum of all chooses = 9850 ✔
+    # 850: (138, 712)
+    # 4700: (210, 525, 497, 500, 344, 600, 237, 1000, 787)
+    # 4300: (267, 233, 194, 430, 300, 427, 153, 349, 243, 390, 250, 340, 245, 376, 76, 27)
+    # remain: (164, 39, 29, 38, 39, 38, 27)
 
 
 if __name__ == '__main__':

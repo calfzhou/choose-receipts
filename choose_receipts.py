@@ -1,13 +1,27 @@
 #!/usr/bin/env python
 
 import argparse
+from decimal import Decimal
 import itertools
 
 
+def to_decimal(val):
+    if isinstance(val, (Decimal, int)):
+        return val
+    elif isinstance(val, str):
+        return Decimal(val)
+    elif isinstance(val, float):
+        return Decimal('%f' % val)
+    else:
+        return Decimal(val)
+
+
 def choose_receipts(values, targets):
+    values = list(map(to_decimal, values))
+    targets = list(map(to_decimal, targets))
     total = sum(values)
     target = sum(targets)
-    print(f'total: {total} vs target: {target} {targets}')
+    print(f'total: {total} vs target: {target} [{", ".join(str(x) for x in targets)}]')
     if total < target:
         return None
 
@@ -30,11 +44,22 @@ def choose_receipts(values, targets):
             if splits:
                 min_sum = s
                 min_selections = _apply_splits(values, splits)
-                print(min_sum, min_selections)
+                print(min_sum, ', '.join(f'({", ".join(str(x) for x in sel)})' for sel in min_selections))
                 if min_sum == target:
-                    return min_selections
+                    return min_selections, True
 
-    return min_selections
+    return min_selections, False
+
+
+def print_selection_result(selection_plan, exact=False):
+    target_satisfies = list(sum(values) for values in selection_plan[:-1])
+    total_satisfy = sum(target_satisfies)
+    print(f"sum of all chooses = {total_satisfy} {'✔' if exact else '×'}")
+    for i, values in enumerate(selection_plan[:-1]):
+        print(f'{target_satisfies[i]}: ({", ".join(str(x) for x in values)})')
+
+    print(f'remain: ({", ".join(str(x) for x in selection_plan[-1])})')
+
 
 
 def _find_possible_splits(values, indexes, targets):
@@ -83,9 +108,9 @@ def _array_sub(source, to_remove):
 
 def main():
     parser = argparse.ArgumentParser(description='Receipts Chooser')
-    parser.add_argument('-t', '--targets', type=float, nargs='+', metavar='TARGET', required=True,
+    parser.add_argument('-t', '--targets', type=Decimal, nargs='+', metavar='TARGET', required=True,
                         help='the target number(s)')
-    parser.add_argument('-v', '--values', type=float, nargs='+', metavar='VALUE', required=True,
+    parser.add_argument('-v', '--values', type=Decimal, nargs='+', metavar='VALUE', required=True,
                         help='the raw receipt value(s)')
 
     args = parser.parse_args()
